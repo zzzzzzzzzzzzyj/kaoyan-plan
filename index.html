@@ -850,6 +850,8 @@ window.__boot=(async function(){
     };
     throw new Error('need token');
   }
+  overlay('<div style="text-align:center;color:#6b7684;font-size:15px">正在加载题库…</div>');
+  var box=document.querySelector('div[style*="z-index:99999"]');
   var d;
   try{ d=await load('data.js',tok); }
   catch(err){
@@ -860,6 +862,7 @@ window.__boot=(async function(){
   }
   var e=await load('data_extra.js',tok).catch(function(){ return 'window.EXTRA=[];'; });
   inject(d); inject(e);
+  if(box&&box.parentNode) box.parentNode.removeChild(box);
 })();
 </script>
 <script>
