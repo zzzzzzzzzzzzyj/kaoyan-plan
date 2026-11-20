@@ -440,7 +440,6 @@
       <div class="qmenu" id="gsres"></div>
     </div>
     <button class="btn" id="tbBtn">课本</button>
-    <button class="btn" id="docBtn">资料</button>
     <button class="btn primary" id="qbBtn">题库</button>
   </div>
   <div class="sub">点任意一天 → 按泰州学院作息排出当天时段，可给每个时段写"我要干什么"（含上课时间）。</div>
@@ -708,20 +707,6 @@
         <button class="btn" id="gpClose">关闭</button>
       </span>
     </div>
-  </div>
-</div>
-
-<div class="modal" id="docmodal">
-  <div class="sheet max">
-    <div class="qtop">
-      <div style="flex:1;min-width:0">
-        <h3 id="docTitle">资料</h3>
-        <div class="meta" id="docMeta"></div>
-      </div>
-      <div class="qacts"><button class="primary" id="docClose">关闭</button></div>
-    </div>
-    <div id="docTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
-    <div id="docBody" class="paperbody"></div>
   </div>
 </div>
 
@@ -1982,29 +1967,6 @@ window.__boot.then(function(){
   };
 
   // ===== 资料（英语作文模板等）=====
-  var DOCS=(window.DATA&&DATA.docs)||[];
-  function openDocAt(i){
-    if(!DOCS.length) return;
-    var d=DOCS[i];
-    document.getElementById('docTitle').textContent=d.title;
-    document.getElementById('docMeta').textContent='共 '+d.md.length+' 字';
-    document.getElementById('docBody').innerHTML=mdRender(d.md);
-    var tabs=document.getElementById('docTabs'); tabs.innerHTML='';
-    DOCS.forEach(function(x,j){
-      var b=document.createElement('button');
-      b.className='btn'+(j===i?' primary':'');
-      b.style.fontSize='12px';
-      b.textContent=x.title;
-      b.onclick=function(){ openDocAt(j); };
-      tabs.appendChild(b);
-    });
-    document.getElementById('docmodal').classList.add('on');
-    var body=document.getElementById('docBody');
-    if(body) body.scrollTop=0;
-  }
-  document.getElementById('docBtn').onclick=function(){ openDocAt(0); };
-  document.getElementById('docClose').onclick=function(){ document.getElementById('docmodal').classList.remove('on'); };
-  document.getElementById('docmodal').onclick=function(e){ if(e.target.id==='docmodal') this.classList.remove('on'); };
   QB.papers = PAPERS.map(function(p){
     var safe=(p.secs||[]).map(function(x){
       return String(x).replace(/\$[^$]*\$/g,'').replace(/\\[a-zA-Z]+/g,'').replace(/[{}\\]/g,' ').replace(/\s+/g,' ').trim().slice(0,18);
