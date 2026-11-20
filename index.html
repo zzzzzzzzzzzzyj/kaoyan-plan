@@ -671,8 +671,9 @@
       </select>
       <input id="impGroup" type="text" placeholder="组名，例：ODE §5.2 习题" style="flex:1;min-width:180px;font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-family:inherit">
       <button class="btn primary" id="impParse">解析</button>
+      <label class="btn" style="font-size:12px;cursor:pointer;display:inline-block">选 md 文件<input type="file" id="impFile" accept=".md,.txt" style="display:none"></label>
     </div>
-    <textarea id="impSrc" placeholder="把千问转好的 md 粘在这里……（没有编号的整段会当成一道题）" style="width:100%;height:170px;font-family:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:8px"></textarea>
+    <textarea id="impSrc" placeholder="把转好的 md 粘在这里，或点上面的「选 md 文件」（没有编号的整段会当成一道题）" style="width:100%;height:170px;font-family:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:8px"></textarea>
     <div id="impList" style="margin-top:10px"></div>
     <div class="foot" style="align-items:center">
       <span id="impMsg" style="font-size:11px;color:#6b7684"></span>
@@ -1821,6 +1822,22 @@ window.__boot.then(function(){
       host.appendChild(d);
     });
   }
+  document.getElementById('impFile').onchange=function(){
+    var f=this.files&&this.files[0]; if(!f) return;
+    var name=String(f.name).replace(/\.(md|txt)$/i,'');
+    var m=/^([a-zA-Z]+)[-_]?(\d{4})/.exec(name);
+    if(m){
+      var sub=/^gd/i.test(m[1])?'gd':(/^ode/i.test(m[1])?'ode':'sd');
+      document.getElementById('impSubj').value=sub;
+      document.getElementById('impGroup').value='真题·'+(sub==='gd'?'高代':'数分')+' '+m[2];
+    }
+    var fr=new FileReader();
+    fr.onload=function(){
+      document.getElementById('impSrc').value=fr.result;
+      document.getElementById('impMsg').textContent='已读入 '+f.name+'：点「解析」看看切出几道';
+    };
+    fr.readAsText(f,'utf-8');
+  };
   document.getElementById('impParse').onclick=function(){
     var txt=document.getElementById('impSrc').value||'';
     if(!txt.trim()){ document.getElementById('impMsg').textContent='先粘点东西进来'; return; }
