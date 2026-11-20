@@ -850,14 +850,17 @@ window.__boot=(async function(){
     };
     throw new Error('need token');
   }
-  overlay('<div style="text-align:center;color:#6b7684;font-size:15px">正在加载题库…</div>');
-  var box=document.querySelector('div[style*="z-index:99999"]');
+  var box=overlay('<div style="text-align:center;color:#6b7684;font-size:15px">正在加载题库…</div>');
   var d;
-  try{ d=await load('data.js',tok); }
+  try{
+    d=await Promise.race([load('data.js',tok), new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('超时（网络太慢或 api.github.com 连不上）')); }, 25000); })]);
+  }
   catch(err){
-    setTok('');
-    overlay('<h2 style="color:#a33;font-size:18px;margin:0 0 8px">令牌无效或过期</h2>'
-      +'<p>已清掉旧令牌，刷新页面重新粘贴。</p>');
+    overlay('<h2 style="color:#a33;font-size:18px;margin:0 0 8px">题库没拉下来</h2>'
+      +'<p>'+String(err&&err.message||err)+'</p>'
+      +'<p><button id="tkRetry" style="padding:8px 14px;border:0;border-radius:8px;background:#1f3a5f;color:#fff">重新输入令牌</button></p>');
+    var rb=document.getElementById('tkRetry');
+    if(rb) rb.onclick=function(){ setTok(''); location.reload(); };
     throw err;
   }
   var e=await load('data_extra.js',tok).catch(function(){ return 'window.EXTRA=[];'; });
